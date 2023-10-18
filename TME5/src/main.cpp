@@ -1,6 +1,9 @@
 #include "Vec3D.h"
 #include "Rayon.h"
 #include "Scene.h"
+#include "Barrier.h"
+#include "Pool.h"
+#include "Job.h"
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -125,9 +128,18 @@ int main () {
 	// Les couleurs des pixels dans l'image finale
 	Color * pixels = new Color[scene.getWidth() * scene.getHeight()];
 
+	int nbthreads = 10;
+
+	// La Barrier pour les Job
+	Barrier barrier(scene.getWidth()*scene.getHeight());
+	Pool pool(0);
+	pool.start(nbthreads);
+
 	// pour chaque pixel, calculer sa couleur
 	for (int x =0 ; x < scene.getWidth() ; x++) {
 		for (int  y = 0 ; y < scene.getHeight() ; y++) {
+
+			/*
 			// le point de l'ecran par lequel passe ce rayon
 			auto & screenPoint = screen[y][x];
 			// le rayon a inspecter
@@ -147,6 +159,11 @@ int main () {
 				// mettre a jour la couleur du pixel dans l'image finale.
 				pixel = finalcolor;
 			}
+			*/
+
+			auto & screenPoint = screen[y][x];
+			Color & pixel = pixels[y*scene.getHeight() + x];
+			SleepJob j(scene, screenPoint, lights, pixel, barrier);
 
 		}
 	}
