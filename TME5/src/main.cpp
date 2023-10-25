@@ -163,7 +163,7 @@ int main () {
 
 			auto & screenPoint = screen[y][x];
 			Color & pixel = pixels[y*scene.getHeight() + x];
-			SleepJob j(scene, screenPoint, lights, pixel, barrier);
+			pool.submit(new SleepJob(scene, screenPoint, lights, pixel, &barrier));
 
 		}
 	}

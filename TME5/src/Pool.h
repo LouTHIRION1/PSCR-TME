@@ -8,19 +8,11 @@
 
 namespace pr {
 
+
 class Pool {
 	Queue<Job> queue;
 	std::vector<std::thread> threads;
 
-	void poolWorker(Queue<Job> &queue){
-		while(true){
-			Job *pjob = queue.pop();
-			if(pjob==nullptr)
-				return;
-			pjob->run();
-			delete pjob;
-		}
-	}
 public:
 	Pool(int qsize) ;
 	void start (int nbthread){
@@ -35,6 +27,15 @@ public:
 		queue.setIsBlocking(false);
 	}
 	~Pool() ;
+	void poolWorker(Queue<Job> *queue){
+		while(true){
+			Job *pjob = queue->pop();
+			if(pjob==nullptr)
+				return;
+			pjob->run();
+			delete pjob;
+		}
+	}
 };
 
 }

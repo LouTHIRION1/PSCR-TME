@@ -37,9 +37,9 @@ public :
 };
 **/
 class SleepJob : public Job {
-	Scene scene;
+	const Scene & scene;
 	const Vec3D & screenPoint;
-	std::vector<Vec3D> lights;
+	const std::vector<Vec3D> & lights;
 	Color & pixel;
 	Barrier *barrier;
 	int findClosestInter(const Scene & scene, const Rayon & ray) {
@@ -105,12 +105,12 @@ class SleepJob : public Job {
 		}
 	}
 public:
-	SleepJob(Scene scene, const Vec3D & screenPoint, std::vector<Vec3D> lights, Color & pixel, Barrier *b){
-		barrier = b;
+	SleepJob(const Scene & scene, const Vec3D & screenPoint,const std::vector<Vec3D> & lights,Color & pixel,Barrier * b):scene(scene), screenPoint(screenPoint), lights(lights), pixel(pixel), barrier(b){
+		/*barrier = b;
 		this->scene = scene;
 		this->screenPoint = screenPoint;
 		this->lights = lights;
-		this->pixel = pixel;
+		this->pixel = pixel;*/
 	}
 	~SleepJob(){}
 	void run(){
