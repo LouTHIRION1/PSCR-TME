@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <cstring>
 
 
 using namespace std;
@@ -13,24 +14,50 @@ int main(int argc, char **argv) {
 	int tube[2];
 	pipe(tube);
 
-	if(argc < 1){
+	if(argc < 2){
 		perror("Pas d'arguments");
 		return 1;
 	}
 
-	execl("/bin/echo", "mqjfhdpiqufh", NULL);
-	cout << argc <<endl;
-	for (int i = 0; i< argc; i++){
-		cout << argv[i] << endl;
+	char *cmd1 = argv[1];
+	char *cmd2;
+	char **args1 = argv+1;
+	char *args2[argc];
+	memset(args2, 0, argc*sizeof(char*));
+
+	int i, cpt;
+	for(i = 2;i<argc; i++) {
+		if(strcmp(argv[i], "|")==0){
+			cmd2 = argv[i+1];
+			argv[i] = NULL;
+			cpt = i+1;
+			break;
+		}
 	}
-	int i = 2;
-	char * mesargs[argc-2];
-	for(;i<argc; i++) {
-		mesargs[i-2] = argv[i];
-		cout << argv[i]<<endl;
+	for(i = 0; i<cpt; i++){
+		printf("test %s\n", argv[i+cpt]);
+		args2[i] = argv[i+cpt];
 	}
-	execv(argv[1], mesargs);
-	return 0;
+
+
+
+	//printf("cmd1 : %s\n", cmd1);
+	char **args = args1;
+	while(*args!=nullptr){
+		printf("args1 : %s\n", *(args++));
+	}
+	//printf("cmd2 : %s\n", cmd2);
+	args = args2;
+	while(*args!=nullptr){
+			printf("args2 : %s\n", *(args++));
+		}
+
+	//char *params[] = {"/usr/bin/ls", "-l", NULL};
+	//execv(params[0],params);
+	/*if(execv(args1[0], args1)){
+		perror("execv error");
+		exit(1);
+	}*/
 
 	/*char* cmd1;
 	char* args_cmd1[];
@@ -56,17 +83,17 @@ int main(int argc, char **argv) {
 	if(fork()==0) {
 		dup2(tube[1],STDOUT_FILENO);
 		//execv(cmd1,args_cmd1);
-		execl("/bin/cat", "pipe.cpp", NULL);
-		close(tube[0]);
 		close(tube[1]);
+		close(tube[0]);
+		execv(args1[0], args1);
 		return 0;
 
 	}else if(fork()==0) {
 		dup2(tube[0],STDIN_FILENO);
 		//execv(cmd2,args_cmd2);
-		execl("/bin/wc", "-l", NULL);
 		close(tube[0]);
 		close(tube[1]);
+		execv(args2[0], args2);
 		return 0;
 	}
 
