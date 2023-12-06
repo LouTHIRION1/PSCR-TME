@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 
-int main00() {
+int main() {
 	pr::ServerSocket ss(1664);
 
 	while (1) {
@@ -21,7 +21,7 @@ int main00() {
 	return 0;
 }
 
-int main() {
+int main00() {
 	pr::ServerSocket ss(1664);
 
 	while (1) {
