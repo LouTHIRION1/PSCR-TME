@@ -46,4 +46,14 @@ void Socket::connect(in_addr ipv4, int port){
 	}
 }
 
+std::ostream &operator<< (std::ostream &os, struct sockaddr_in *addr) {
+	char hname[1024];
+	if(getnameinfo((struct sockaddr *) addr, sizeof (* addr), hname, 1024, nullptr, 0, 0)==0) {
+		os << '"' << hname << '"' <<std::endl;
+	}
+	// conversion de l’adresse en chaine de caractère et conversion du port en chaine de caractère
+	os<<inet_ntoa(addr->sin_addr)<<"i"<<ntohs(addr->sin_port);
+	return os;
+}
+
 }
