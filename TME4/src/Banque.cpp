@@ -9,9 +9,19 @@ namespace pr {
 void Banque::transfert(size_t deb, size_t cred, unsigned int val) {
 	Compte & debiteur = comptes[deb];
 	Compte & crediteur = comptes[cred];
-	if (debiteur.debiter(val)) {
+	/*if (debiteur.debiter(val)) {
 		crediteur.crediter(val);
-	}
+	}*/
+	//crediteur.lock();
+	//debiteur.lock();
+	std::lock(crediteur,debiteur);
+
+	if(debiteur.debiter(val))
+		crediteur.crediter(val);
+
+	debiteur.unlock();
+	crediteur.unlock();
+
 }
 size_t Banque::size() const {
 	return comptes.size();
@@ -29,6 +39,7 @@ bool Banque::comptabiliser (int attendu) const {
 	if (bilan != attendu) {
 		cout << "Bilan comptable faux : attendu " << attendu << " obtenu : " << bilan << endl;
 	}
+	cout << bilan << " "<< attendu<<endl;
 	return bilan == attendu;
 }
 }
